@@ -6,7 +6,7 @@ LANG=en_US.UTF-8
 INSTALL_LOGFILE="/tmp/btpanel-install.log"
 # exec > >(tee -a "$INSTALL_LOGFILE") 2>&1 
 
-Btapi_Url='http://www.example.com'
+Btapi_Url='https://btkx.916919.xyz'
 Check_Api=$(curl -Ss --connect-timeout 5 -m 2 $Btapi_Url/api/SetupCount)
 if [ "$Check_Api" != 'ok' ];then
 	Red_Error "此宝塔第三方云端无法连接，因此安装过程已中止！";
@@ -853,11 +853,11 @@ Install_Bt(){
 	fi
 
 	wget -O /etc/init.d/bt ${download_Url}/install/src/bt6.init -T 15
-	wget -O /www/server/panel/install/public.sh ${Btapi_Url}/install/public.sh -T 15
+	wget -O /www/server/panel/install/public.sh ${Btapi_Url}/public.sh -T 15
 	echo "=============================================="
 	echo "正在下载面板文件,请稍等..................."
 	echo "=============================================="
-	wget -O panel.zip ${Btapi_Url}/install/src/panel6.zip -T 15
+	wget -O panel.zip ${Btapi_Url}/panel6.zip -T 15
 
 	if [ -f "${setup_path}/server/panel/data/default.db" ];then
 		if [ -d "/${setup_path}/server/panel/old_data" ];then
