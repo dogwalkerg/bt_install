@@ -94,7 +94,7 @@ fi
 
 cd ~
 setup_path="/www"
-python_bin=$setup_path/server/panel/pyenv/bin/python
+python_bin=/www/server/panel/pyenv/bin/python
 cpu_cpunt=$(cat /proc/cpuinfo|grep processor|wc -l)
 panelPort=$(expr $RANDOM % 55535 + 10000)
 # if [ "$1" ];then
@@ -221,7 +221,7 @@ Service_Add(){
 		chkconfig --level 2345 bt on
 		Centos9Check=$(cat /etc/redhat-release |grep ' 9')
 		if [ "${Centos9Check}" ];then
-            wget -O /usr/lib/systemd/system/btpanel.service ${download_Url}/init/systemd/btpanel.service
+            wget -O /usr/lib/systemd/system/btpanel.service http://download.bt.cn/init/systemd/btpanel.service
 			systemctl enable btpanel
 		fi		
 	elif [ "${PM}" == "apt-get" ]; then
@@ -231,10 +231,10 @@ Service_Add(){
 Set_Centos7_Repo(){
 # 	CN_YUM_URL=$(grep -E "aliyun|163|tencent|tsinghua" /etc/yum.repos.d/CentOS-Base.repo)
 # 	if [ -z "${CN_YUM_URL}" ];then
-# 		if [ -z "${download_Url}" ];then
+# 		if [ -z "http://download.bt.cn" ];then
 # 			download_Url="http://download.bt.cn"
 # 		fi
-# 		curl -Ss --connect-timeout 3 -m 60 ${download_Url}/install/vault-repo.sh|bash
+# 		curl -Ss --connect-timeout 3 -m 60 http://download.bt.cn/install/vault-repo.sh|bash
 # 		return
 # 	fi
 	MIRROR_CHECK=$(cat /etc/yum.repos.d/CentOS-Base.repo |grep "[^#]mirror.centos.org")
@@ -265,10 +265,10 @@ Set_Centos7_Repo(){
 		TAR_CHECK=$(which tar)
 		if [ "$?" == "0" ] ;then
 			\cp -rpa /etc/yum.repos.d/ /etc/yumBak
-			if [ -z "${download_Url}" ];then
+			if [ -z "http://download.bt.cn" ];then
 				download_Url="http://download.bt.cn"
 			fi
-			curl -Ss --connect-timeout 5 -m 60 -O ${download_Url}/src/el7repo.tar.gz
+			curl -Ss --connect-timeout 5 -m 60 -O http://download.bt.cn/src/el7repo.tar.gz
 			rm -f /etc/yum.repos.d/*.repo
 			tar -xvzf el7repo.tar.gz -C /etc/yum.repos.d/
 		fi
@@ -281,10 +281,10 @@ Set_Centos7_Repo(){
 
 }
 # Set_Centos7_Repo(){
-# 		if [ -z "${download_Url}" ];then
+# 		if [ -z "http://download.bt.cn" ];then
 # 			download_Url="http://download.bt.cn"
 # 		fi
-# 		curl -Ss --connect-timeout 3 -m 60 ${download_Url}/install/vault-repo.sh|bash
+# 		curl -Ss --connect-timeout 3 -m 60 http://download.bt.cn/install/vault-repo.sh|bash
 # }
 Set_Centos8_Repo(){
 	HUAWEI_CHECK=$(cat /etc/motd |grep "Huawei Cloud")
@@ -312,15 +312,15 @@ Set_Centos8_Repo(){
 
 	yum install unzip tar -y
 	if [ "$?" != "0" ] ;then
-		if [ -z "${download_Url}" ];then
+		if [ -z "http://download.bt.cn" ];then
 			download_Url="http://download.bt.cn"
 		fi
 		if [ ! -f "/usr/bin/tar" ] ;then
-			curl -Ss --connect-timeout 5 -m 60 -O ${download_Url}/src/tar-1.30-5.el8.x86_64.rpm
+			curl -Ss --connect-timeout 5 -m 60 -O http://download.bt.cn/src/tar-1.30-5.el8.x86_64.rpm
 			yum install tar-1.30-5.el8.x86_64.rpm -y
 		fi
 		\cp -rpa /etc/yum.repos.d/ /etc/yumBak
-		curl -Ss --connect-timeout 5 -m 60 -O ${download_Url}/src/el8repo.tar.gz
+		curl -Ss --connect-timeout 5 -m 60 -O http://download.bt.cn/src/el8repo.tar.gz
 		rm -f /etc/yum.repos.d/*.repo
 		tar -xvzf el8repo.tar.gz -C /etc/yum.repos.d/
 	fi
@@ -826,17 +826,17 @@ Install_Python_Lib(){
 	fi
 }
 Install_Bt(){
-	if [ -f ${setup_path}/server/panel/data/port.pl ];then
-		panelPort=$(cat ${setup_path}/server/panel/data/port.pl)
+	if [ -f /www/server/panel/data/port.pl ];then
+		panelPort=$(cat /www/server/panel/data/port.pl)
 	fi
 	if [ "${PANEL_PORT}" ];then
 		panelPort=$PANEL_PORT
 	fi
-	mkdir -p ${setup_path}/server/panel/logs
-	mkdir -p ${setup_path}/server/panel/vhost/apache
-	mkdir -p ${setup_path}/server/panel/vhost/nginx
-	mkdir -p ${setup_path}/server/panel/vhost/rewrite
-	mkdir -p ${setup_path}/server/panel/install
+	mkdir -p /www/server/panel/logs
+	mkdir -p /www/server/panel/vhost/apache
+	mkdir -p /www/server/panel/vhost/nginx
+	mkdir -p /www/server/panel/vhost/rewrite
+	mkdir -p /www/server/panel/install
 	mkdir -p /www/server
 	mkdir -p /www/wwwroot
 	mkdir -p /www/wwwlogs
@@ -852,27 +852,27 @@ Install_Bt(){
 		sleep 1
 	fi
 
-	wget -O /etc/init.d/bt ${download_Url}/install/src/bt6.init -T 15
-	wget -O /www/server/panel/install/public.sh ${Btapi_Url}/public.sh -T 15
+	wget -O /etc/init.d/bt http://download.bt.cn/install/src/bt6.init -T 15
+	wget -O /www/server/panel/install/public.sh https://btkx.916919.xyz/public.sh -T 15
 	echo "=============================================="
 	echo "正在下载面板文件,请稍等..................."
 	echo "=============================================="
-	wget -O panel.zip ${Btapi_Url}/panel6.zip -T 15
+	wget -O panel.zip https://btkx.916919.xyz/panel6.zip -T 15
 
-	if [ -f "${setup_path}/server/panel/data/default.db" ];then
-		if [ -d "/${setup_path}/server/panel/old_data" ];then
-			rm -rf ${setup_path}/server/panel/old_data
+	if [ -f "/www/server/panel/data/default.db" ];then
+		if [ -d "/www/server/panel/old_data" ];then
+			rm -rf /www/server/panel/old_data
 		fi
-		mkdir -p ${setup_path}/server/panel/old_data
+		mkdir -p /www/server/panel/old_data
 		d_format=$(date +"%Y%m%d_%H%M%S")
-		\cp -arf ${setup_path}/server/panel/data/default.db ${setup_path}/server/panel/data/default_backup_${d_format}.db
-		mv -f ${setup_path}/server/panel/data/default.db ${setup_path}/server/panel/old_data/default.db
-		mv -f ${setup_path}/server/panel/data/system.db ${setup_path}/server/panel/old_data/system.db
-		mv -f ${setup_path}/server/panel/data/port.pl ${setup_path}/server/panel/old_data/port.pl
-		mv -f ${setup_path}/server/panel/data/admin_path.pl ${setup_path}/server/panel/old_data/admin_path.pl
+		\cp -arf /www/server/panel/data/default.db /www/server/panel/data/default_backup_${d_format}.db
+		mv -f /www/server/panel/data/default.db /www/server/panel/old_data/default.db
+		mv -f /www/server/panel/data/system.db /www/server/panel/old_data/system.db
+		mv -f /www/server/panel/data/port.pl /www/server/panel/old_data/port.pl
+		mv -f /www/server/panel/data/admin_path.pl /www/server/panel/old_data/admin_path.pl
 		
-		if [ -d "${setup_path}/server/panel/data/db" ];then
-			\cp -r ${setup_path}/server/panel/data/db ${setup_path}/server/panel/old_data/
+		if [ -d "/www/server/panel/data/db" ];then
+			\cp -r /www/server/panel/data/db /www/server/panel/old_data/
 		fi
 		
 	fi
@@ -886,24 +886,24 @@ Install_Bt(){
 		fi
 	fi
 
-	unzip -o panel.zip -d ${setup_path}/server/ > /dev/null
+	unzip -o panel.zip -d /www/server/ > /dev/null
 
-	if [ -d "${setup_path}/server/panel/old_data" ];then
-		mv -f ${setup_path}/server/panel/old_data/default.db ${setup_path}/server/panel/data/default.db
-		mv -f ${setup_path}/server/panel/old_data/system.db ${setup_path}/server/panel/data/system.db
-		mv -f ${setup_path}/server/panel/old_data/port.pl ${setup_path}/server/panel/data/port.pl
-		mv -f ${setup_path}/server/panel/old_data/admin_path.pl ${setup_path}/server/panel/data/admin_path.pl
+	if [ -d "/www/server/panel/old_data" ];then
+		mv -f /www/server/panel/old_data/default.db /www/server/panel/data/default.db
+		mv -f /www/server/panel/old_data/system.db /www/server/panel/data/system.db
+		mv -f /www/server/panel/old_data/port.pl /www/server/panel/data/port.pl
+		mv -f /www/server/panel/old_data/admin_path.pl /www/server/panel/data/admin_path.pl
 		
-		if [ -d "${setup_path}/server/panel/old_data/db" ];then
-			\cp -r ${setup_path}/server/panel/old_data/db ${setup_path}/server/panel/data/
+		if [ -d "/www/server/panel/old_data/db" ];then
+			\cp -r /www/server/panel/old_data/db /www/server/panel/data/
 		fi
 		
-		if [ -d "/${setup_path}/server/panel/old_data" ];then
-			rm -rf ${setup_path}/server/panel/old_data
+		if [ -d "//www/server/panel/old_data" ];then
+			rm -rf /www/server/panel/old_data
 		fi
 	fi
 
-	if [ ! -f ${setup_path}/server/panel/tools.py ] || [ ! -f ${setup_path}/server/panel/BT-Panel ];then
+	if [ ! -f /www/server/panel/tools.py ] || [ ! -f /www/server/panel/BT-Panel ];then
 		ls -lh panel.zip
 		Red_Error "ERROR: Failed to download, please try install again!" "ERROR: 下载宝塔失败，请尝试重新安装！"
 	fi
@@ -914,17 +914,17 @@ Install_Bt(){
     fi
 
 	rm -f panel.zip
-	rm -f ${setup_path}/server/panel/class/*.pyc
-	rm -f ${setup_path}/server/panel/*.pyc
+	rm -f /www/server/panel/class/*.pyc
+	rm -f /www/server/panel/*.pyc
 
 	chmod +x /etc/init.d/bt
-	chmod -R 600 ${setup_path}/server/panel
-	chmod -R +x ${setup_path}/server/panel/script
+	chmod -R 600 /www/server/panel
+	chmod -R +x /www/server/panel/script
 	ln -sf /etc/init.d/bt /usr/bin/bt
-	echo "${panelPort}" > ${setup_path}/server/panel/data/port.pl
-	wget -O /etc/init.d/bt ${download_Url}/install/src/bt7.init -T 15
-	wget -O /www/server/panel/init.sh ${download_Url}/install/src/bt7.init -T 15
-	wget -O /www/server/panel/data/softList.conf ${download_Url}/install/conf/softList.conf
+	echo "${panelPort}" > /www/server/panel/data/port.pl
+	wget -O /etc/init.d/bt http://download.bt.cn/install/src/bt7.init -T 15
+	wget -O /www/server/panel/init.sh http://download.bt.cn/install/src/bt7.init -T 15
+	wget -O /www/server/panel/data/softList.conf http://download.bt.cn/install/conf/softList.conf
 
 	rm -f /www/server/panel/class/*.so
 	if [ ! -f /www/server/panel/data/not_workorder.pl ]; then
@@ -984,7 +984,7 @@ Set_Bt_Panel(){
 		btpip install PyMySQL
 	fi
 	auth_path=$(cat ${admin_auth})
-	cd ${setup_path}/server/panel/
+	cd /www/server/panel/
 	/etc/init.d/bt start
 	$python_bin -m py_compile tools.py
 	$python_bin tools.py username
@@ -993,8 +993,8 @@ Set_Bt_Panel(){
 		username=$PANEL_USER
 	fi
 	cd ~
-	echo "${password}" > ${setup_path}/server/panel/default.pl
-	chmod 600 ${setup_path}/server/panel/default.pl
+	echo "${password}" > /www/server/panel/default.pl
+	chmod 600 /www/server/panel/default.pl
 	sleep 3
 	if [ "$SET_SSL" == true ]; then
 		if [ ! -f "/www/server/panel/pyenv/n.pl" ];then
@@ -1027,7 +1027,7 @@ Set_Bt_Panel(){
 	fi
 
 	if [ "$PANEL_USER" ];then
-		cd ${setup_path}/server/panel/
+		cd /www/server/panel/
 		btpython -c 'import tools;tools.set_panel_username("'$PANEL_USER'")'
 		cd ~
 	fi
@@ -1117,14 +1117,14 @@ Get_Ip_Address(){
 		if [ "${ipv6Check}" == "None" ]; then
 			getIpAddress="SERVER_IP"
 		else
-			echo "True" > ${setup_path}/server/panel/data/ipv6.pl
+			echo "True" > /www/server/panel/data/ipv6.pl
 			sleep 1
 			/etc/init.d/bt restart
 		fi
 	fi
 
 	if [ "${getIpAddress}" != "SERVER_IP" ];then
-		echo "${getIpAddress}" > ${setup_path}/server/panel/data/iplist.txt
+		echo "${getIpAddress}" > /www/server/panel/data/iplist.txt
 	fi
 	LOCAL_IP=$(ip addr | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -E -v "^127\.|^255\.|^0\." | head -n 1)
 }
